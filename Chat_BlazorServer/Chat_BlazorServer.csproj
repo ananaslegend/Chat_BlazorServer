@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Chat_BlazorServer.Pages\Chat_BlazorServer.Pages.csproj" />
     <ProjectReference Include="..\Chat_BlazorServer.Data\Chat_BlazorServer.Data.csproj" />
   </ItemGroup>
 

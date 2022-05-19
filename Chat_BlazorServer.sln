@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat_BlazorServer.Domain", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat_BlazorServer.Data", "Chat_BlazorServer.Data\Chat_BlazorServer.Data.csproj", "{16C87C1D-01F8-4548-A976-02361C19515B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat_BlazorServer.Pages", "Chat_BlazorServer.Pages\Chat_BlazorServer.Pages.csproj", "{390015A8-65C0-4021-8154-E569E76443EE}"
-EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Chat_BlazorServer.SqlServerDb", "Chat_BlazorServer.SqlServerDb\Chat_BlazorServer.SqlServerDb.sqlproj", "{BC646C89-99EA-49F6-913F-1C34D21D0D96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chat_BlazorServer.BLL", "Chat_BlazorServer.BLL\Chat_BlazorServer.BLL.csproj", "{F33E64A1-79EC-4EF4-8CFC-D79916C13F49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,16 +37,16 @@ Global
 		{16C87C1D-01F8-4548-A976-02361C19515B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16C87C1D-01F8-4548-A976-02361C19515B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16C87C1D-01F8-4548-A976-02361C19515B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{390015A8-65C0-4021-8154-E569E76443EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{390015A8-65C0-4021-8154-E569E76443EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{390015A8-65C0-4021-8154-E569E76443EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{390015A8-65C0-4021-8154-E569E76443EE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BC646C89-99EA-49F6-913F-1C34D21D0D96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BC646C89-99EA-49F6-913F-1C34D21D0D96}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC646C89-99EA-49F6-913F-1C34D21D0D96}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{BC646C89-99EA-49F6-913F-1C34D21D0D96}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC646C89-99EA-49F6-913F-1C34D21D0D96}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BC646C89-99EA-49F6-913F-1C34D21D0D96}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{F33E64A1-79EC-4EF4-8CFC-D79916C13F49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F33E64A1-79EC-4EF4-8CFC-D79916C13F49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F33E64A1-79EC-4EF4-8CFC-D79916C13F49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F33E64A1-79EC-4EF4-8CFC-D79916C13F49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
