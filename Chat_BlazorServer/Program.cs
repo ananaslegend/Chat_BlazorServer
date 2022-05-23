@@ -6,6 +6,8 @@ using Chat_BlazorServer.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Chat_BlazorServer.Domain.Models;
+using Chat_BlazorServer.DataAccess.Abstractions;
+using Chat_BlazorServer.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,8 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationContext>();
+
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
