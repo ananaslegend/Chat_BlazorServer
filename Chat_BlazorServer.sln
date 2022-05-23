@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat_BlazorServer.Data", "C
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Chat_BlazorServer.SqlServerDb", "Chat_BlazorServer.SqlServerDb\Chat_BlazorServer.SqlServerDb.sqlproj", "{BC646C89-99EA-49F6-913F-1C34D21D0D96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chat_BlazorServer.BLL", "Chat_BlazorServer.BLL\Chat_BlazorServer.BLL.csproj", "{F33E64A1-79EC-4EF4-8CFC-D79916C13F49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat_BlazorServer.BLL", "Chat_BlazorServer.BLL\Chat_BlazorServer.BLL.csproj", "{F33E64A1-79EC-4EF4-8CFC-D79916C13F49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
