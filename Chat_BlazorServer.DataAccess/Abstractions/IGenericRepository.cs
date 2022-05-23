@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Chat_BlazorServer.DataAccess.Abstractions
 {
-    internal interface IGenericRepository<TEntity> where TEntity : class
+    public interface IGenericRepository<TEntity> where TEntity : class
     {
         TEntity Get(int id);
         IEnumerable<TEntity> GetAll();

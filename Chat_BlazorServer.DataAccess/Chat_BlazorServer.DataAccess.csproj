@@ -8,11 +8,11 @@
 
   <ItemGroup>
     <Folder Include="Factories\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Chat_BlazorServer.Data\Chat_BlazorServer.Data.csproj" />
+    <ProjectReference Include="..\Chat_BlazorServer.Domain\Chat_BlazorServer.Domain.csproj" />
   </ItemGroup>
 
 </Project>

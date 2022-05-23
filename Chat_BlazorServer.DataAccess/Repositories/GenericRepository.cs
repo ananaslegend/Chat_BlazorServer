@@ -9,7 +9,7 @@ using Chat_BlazorServer.DataAccess.Abstractions;
 
 namespace Chat_BlazorServer.DataAccess.Repositories
 {
-    internal class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity: class
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity: class
     {
         protected readonly ApplicationContext _context;
         public GenericRepository(ApplicationContext context)
