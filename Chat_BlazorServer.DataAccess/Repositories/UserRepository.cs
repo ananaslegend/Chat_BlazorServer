@@ -16,6 +16,16 @@ namespace Chat_BlazorServer.DataAccess.Repositories
 
         }
 
+        public ApplicationUser FindUser(string userName, string pass)
+        {
+            var user = ApplicationContext
+                .Users
+                .Where(u => u.UserName == userName)
+                .FirstOrDefault();
+
+            return user;
+        }
+
         //downcast from generic 
         public ApplicationContext ApplicationContext
         {

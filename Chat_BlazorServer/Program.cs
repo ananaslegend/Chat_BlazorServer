@@ -8,24 +8,14 @@ using Microsoft.AspNetCore.Identity;
 using Chat_BlazorServer.Domain.Models;
 using Chat_BlazorServer.DataAccess.Abstractions;
 using Chat_BlazorServer.DataAccess;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Chat_BlazorServer.Configuration;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
-
-builder.Services.AddDbContext<ApplicationContext>(options =>
-    {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
-        b => b.MigrationsAssembly("Chat_BlazorServer"));
-    });
-
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationContext>();
-
-builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+var builder = AppConfiguration
+                .AddServices(WebApplication
+                .CreateBuilder(args));
 
 var app = builder.Build();
 
@@ -44,6 +34,7 @@ app.UseAuthorization();
 
 app.UseRouting();
 
+app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
