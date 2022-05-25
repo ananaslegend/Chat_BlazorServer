@@ -1,16 +1,20 @@
 ﻿@page "/login"
-
+@using Blazored.LocalStorage
+@using Chat_BlazorServer.Domain.DTOs
+@inject NavigationManager NavManager
+@inject HttpClient _httpClient
+@inject ILocalStorageService _localStorage
 
 <h3>Log in, please</h3>
 
-<EditForm Model="obj" OnSubmit="HandleLogin">
+<EditForm Model="user" OnSubmit="HandleLogin">
     <div class="form-group" style="padding-bottom: 20px;">
         <label for="login">Your Login</label>
-        <InputText id="login" class="form-controll" @bind-Value="login"/>
+        <InputText id="login" class="form-controll" @bind-Value="user.UserName"/>
     </div>
     <div class="form-group" style="padding-bottom: 20px;">
         <label for="password">Password</label>
-        <InputText id="password" class="form-controll" @bind-Value="password" type="password"/>
+        <InputText id="password" class="form-controll" @bind-Value="user.Password" type="password"/>
     </div>
 
     <button class="btn btn-primary" type="submit">Login</button>
@@ -20,27 +24,22 @@
 
 @code
 {
-    @*  just for test   *@
-    object obj = new();
-    string login;
-    string password;
-
-    private async void HandleLogin()
-    { }
-
-    @*User user = new User();
+    private UserLoginDTO user = new();
 
     private async void HandleLogin()
     {
-        if (await chatService.Login(user))
+        var response = await _httpClient.PostAsJsonAsync("https://localhost:7001/api/Login/login", user);
+
+        if(response.IsSuccessStatusCode)
         {
-            await LocalStorage.SetItemAsync<string>("user_login", user.Login);
-            await stateProvider.GetAuthenticationStateAsync();
-            NavManager.NavigateTo("");
+            await SaveToken(response);
         }
-        else
-        {
-            System.Console.WriteLine("Problem with login");
-        }
-    }*@
+    }
+
+     private async Task SaveToken(HttpResponseMessage response)
+     {
+        var responseContent = await response.Content.ReadAsStringAsync();
+
+        await _localStorage.SetItemAsync<string>("authToken", responseContent);
+     }
 }

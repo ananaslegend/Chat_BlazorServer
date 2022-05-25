@@ -11,6 +11,6 @@ namespace Chat_BlazorServer.BLL.Abstractions
     public interface IAuth
     {
         public Task<ApplicationUser> Auth(UserLoginDTO userData);
-        public Task<bool> Register(UserLoginDTO userData);
+        public Task<bool> Registration(UserLoginDTO userData);
     }
 }

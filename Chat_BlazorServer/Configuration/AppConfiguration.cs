@@ -1,9 +1,11 @@
-﻿using Chat_BlazorServer.BLL.Services;
+﻿using Blazored.LocalStorage;
+using Chat_BlazorServer.BLL.Services;
 using Chat_BlazorServer.Data;
 using Chat_BlazorServer.Data.Context;
 using Chat_BlazorServer.DataAccess;
 using Chat_BlazorServer.DataAccess.Abstractions;
 using Chat_BlazorServer.Domain.Models;
+using Chat_BlazorServer.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -46,11 +48,22 @@ namespace Chat_BlazorServer.Configuration
                     };
                 });
 
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-                            .AddEntityFrameworkStores<ApplicationContext>();
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>( opt => 
+                {
+                    opt.Password.RequireDigit = true;
+                    opt.Password.RequiredLength = 5;
+                    opt.Password.RequireUppercase = false;
+                    opt.Password.RequireNonAlphanumeric = false;
+                })
+                .AddEntityFrameworkStores<ApplicationContext>();
 
             builder.Services.AddScoped<AuthJwtService>();
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+
+            //Blazor things
+            builder.Services.AddHttpClient();
+            builder.Services.AddBlazoredLocalStorage();
 
             return builder;
         }

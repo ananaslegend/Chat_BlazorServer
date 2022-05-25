@@ -39,7 +39,7 @@ namespace Chat_BlazorServer.BLL.Services
             throw new Exception("User not found");
         }
 
-        public async Task<bool> Register(UserLoginDTO userData)
+        public async Task<bool> Registration(UserLoginDTO userData)
         {
             var existUser = _userManager.Users.FirstOrDefault(x => x.UserName == userData.UserName);
 
@@ -72,5 +72,7 @@ namespace Chat_BlazorServer.BLL.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+      
     }
 }

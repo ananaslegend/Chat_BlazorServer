@@ -23,6 +23,7 @@ namespace Chat_BlazorServer.Controllers
             _authService = authService;
         }
 
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDTO userData)
         {
             try
@@ -33,13 +34,14 @@ namespace Chat_BlazorServer.Controllers
             }
             catch
             {
-                return NotFound("User not found ");
+                return NotFound("User not found");
             }   
         }
 
+        [HttpPost("registration")]
         public async Task<IActionResult> Registration([FromBody] UserLoginDTO userData)
         {
-
+            return await _authService.Registration(userData) ? Ok() : BadRequest();   
         }
     }
 }

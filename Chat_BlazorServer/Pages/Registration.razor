@@ -1,15 +1,20 @@
 ﻿@page "/registration"
 
+@inject NavigationManager NavManager
+@inject HttpClient _httpClient
+
+@using Chat_BlazorServer.Domain.DTOs
+
 <h3>Registration!</h3>
 
-<EditForm Model="obj" OnSubmit="HandleRegistration">
+<EditForm Model="user" OnSubmit="HandleRegistration">
     <div class="form-group" style="padding-bottom: 20px;">
         <label for="login">Your Login</label>
-        <InputText id="login" class="form-controll" @bind-Value="login"/>
+        <InputText id="login" class="form-controll" @bind-Value="user.UserName"/>
     </div>
     <div class="form-group" style="padding-bottom: 20px;">
         <label for="password">Password</label>
-        <InputText id="password" class="form-controll" @bind-Value="password" type="password"/>
+        <InputText id="password" class="form-controll" @bind-Value="user.Password" type="password"/>
     </div>
 
     <button class="btn btn-primary" type="submit">Submit</button>
@@ -19,18 +24,14 @@
 
 @code
 {
-    object obj = new();
-    string login;
-    string password;
-    private void HandleRegistration()
-    { }
+    private UserLoginDTO user = new();
 
-
-    @*User user = new User();
-
-    private void HandleRegistration()
+    private async void HandleRegistration()
     {
-        chatService.RegistrateUser(user);
-        NavManager.NavigateTo("/login");
-    }*@
+        var result = await _httpClient.PostAsJsonAsync("https://localhost:7001/api/Login/registration", user);
+        if(result.IsSuccessStatusCode)
+        {
+            NavManager.NavigateTo("/login");
+        }
+    }
 }
