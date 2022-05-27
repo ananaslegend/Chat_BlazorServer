@@ -38,26 +38,6 @@ namespace Chat_BlazorServer.Configuration
                 b => b.MigrationsAssembly("Chat_BlazorServer"));
             });
 
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(opt =>
-                {
-                    opt.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        //ValidateIssuer = true,
-                        //ValidateAudience = true,
-                        //ValidateLifetime = true,
-                        ValidIssuer = builder.Configuration["JWT:Issuer"],
-                        ValidAudience = builder.Configuration["JWT:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
-                    };
-                });
-
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>( opt => 
                 {
                     opt.Password.RequireDigit = true;
@@ -69,6 +49,28 @@ namespace Chat_BlazorServer.Configuration
 
             builder.Services.AddScoped<AuthJwtService>();
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+            builder.Services
+                .AddAuthorization()
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(opt =>
+                {
+                    opt.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidIssuer = builder.Configuration["JWT:Issuer"],
+                        ValidAudience = builder.Configuration["JWT:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+                    };
+                });
 
             //Blazor things 
             builder.Services.AddHttpClient();
