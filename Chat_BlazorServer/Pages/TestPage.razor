@@ -1,33 +1,33 @@
 ﻿@page "/test"
 
 @inject NavigationManager NavManager
-@inject HttpClient _httpClient
 @inject ILocalStorageService _localStorage
+@inject IRestService restService
 
 @using Blazored.LocalStorage
 @using Chat_BlazorServer.Domain.DTOs
+@using Chat_BlazorServer.Controllers
+@using Chat_BlazorServer.Helpers
+@using Chat_BlazorServer.Services.Abstractions
+@using RestSharp
+
 
 <h3>Test!</h3>
 
 <button class="btn btn-primary" @onclick="HandleTest">Try!</button>
-<h3>Is Success Status Code @responseCode</h3>
+<h3>Response</h3>
 
 
 @code
 {
     private bool responseCode;
+    //private RestResponse? response = null;
+
 
     private async void HandleTest()
     {
-        var requestMessage = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7001/api/Test/");
+        var response = await restService.GetAsync("test/");
 
-        var token = await _localStorage.GetItemAsync<string>("authToken");
-
-        requestMessage.Headers.Authorization
-            = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            var response = await _httpClient.SendAsync(requestMessage);
-
-            responseCode = response.IsSuccessStatusCode;
+        string test = String.Empty;
     }
 }

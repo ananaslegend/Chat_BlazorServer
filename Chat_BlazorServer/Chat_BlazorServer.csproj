@@ -25,4 +25,8 @@
     <ProjectReference Include="..\Chat_BlazorServer.Data\Chat_BlazorServer.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CustomLocalStorageService\" />
+  </ItemGroup>
+
 </Project>

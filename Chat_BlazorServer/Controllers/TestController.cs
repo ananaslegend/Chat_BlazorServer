@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Chat_BlazorServer.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TestController : ControllerBase
     {
+        [Authorize]
         [HttpGet]
         public IActionResult Get()
         {

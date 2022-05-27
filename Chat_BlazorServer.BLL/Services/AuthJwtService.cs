@@ -64,8 +64,8 @@ namespace Chat_BlazorServer.BLL.Services
             };
 
             var token = new JwtSecurityToken(
-                _config["JWT:Issuer"],
-                _config["JWT: Audience"],
+                issuer: _config["JWT:Issuer"],
+                audience: _config["JWT:Audience"],
                 claims,
                 expires: DateTime.Now.AddMinutes(60),
                 signingCredentials: credentials);
