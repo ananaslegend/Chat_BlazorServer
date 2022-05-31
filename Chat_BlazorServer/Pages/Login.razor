@@ -1,9 +1,15 @@
 ﻿@page "/login"
 @using Blazored.LocalStorage
 @using Chat_BlazorServer.Domain.DTOs
+@using Chat_BlazorServer.Services
+@using System.Text.Json
+@using Chat_BlazorServer.Services.Abstractions
+@using RestSharp
 @inject NavigationManager NavManager
+@inject IHttpClientFactory _httpClientFactory
 @inject HttpClient _httpClient
 @inject ILocalStorageService _localStorage
+@inject IChatClient _chatClient
 
 <h3>Log in, please</h3>
 
@@ -28,18 +34,22 @@
 
     private async void HandleLogin()
     {
-        var response = await _httpClient.PostAsJsonAsync("https://localhost:7001/api/Login/login", user);
+       
+        var client = _httpClientFactory.CreateClient("BaseClient");
+        var response = await client.PostAsJsonAsync("Login/login", user);
 
         if(response.IsSuccessStatusCode)
         {
             await SaveToken(response);
         }
+  
     }
 
-     private async Task SaveToken(HttpResponseMessage response)
-     {
+    private async Task SaveToken(HttpResponseMessage response)
+    {
         var responseContent = await response.Content.ReadAsStringAsync();
 
         await _localStorage.SetItemAsync<string>("authToken", responseContent);
-     }
-}
+    }
+
+ }

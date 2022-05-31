@@ -2,32 +2,49 @@
 
 @inject NavigationManager NavManager
 @inject ILocalStorageService _localStorage
-@inject IRestService restService
+@inject HttpClient _httpClient
+@inject IChatClient restService
+@inject IHttpClientFactory _httpClientFactory
+@inject IAuthHelper authHelper
 
 @using Blazored.LocalStorage
 @using Chat_BlazorServer.Domain.DTOs
 @using Chat_BlazorServer.Controllers
 @using Chat_BlazorServer.Helpers
+@using Chat_BlazorServer.Helpers.Abstractions
 @using Chat_BlazorServer.Services.Abstractions
 @using RestSharp
+@using System.Net.Http.Headers
 
 
 <h3>Test!</h3>
 
 <button class="btn btn-primary" @onclick="HandleTest">Try!</button>
-<h3>Response</h3>
+
 
 
 @code
 {
+    string response;
     private bool responseCode;
-    //private RestResponse? response = null;
-
 
     private async void HandleTest()
     {
-        var response = await restService.GetAsync("test/");
+        try
+        {
+            var client = _httpClientFactory.CreateClient("BaseClient");
 
-        string test = String.Empty;
+            var token = await authHelper.GetToken();
+
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await client.GetStringAsync("Test/");
+    
+        }
+        catch
+        {
+            response = "ERROR NOT AUTHORIZED";
+        }
     }
 }

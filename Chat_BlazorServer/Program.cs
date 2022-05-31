@@ -14,7 +14,7 @@ using System.Text;
 using Chat_BlazorServer.Configuration;
 
 var builder = AppConfiguration
-                .AddServices(WebApplication
+                .AddServicesAsync(WebApplication
                 .CreateBuilder(args));
 
 var app = builder.Build();

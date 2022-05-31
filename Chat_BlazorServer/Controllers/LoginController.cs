@@ -9,6 +9,7 @@ using System.Text;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Chat_BlazorServer.BLL.Services;
+using Chat_BlazorServer.BLL.Services.Abstractions;
 
 namespace Chat_BlazorServer.Controllers
 {
@@ -16,9 +17,9 @@ namespace Chat_BlazorServer.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly AuthJwtService _authService;
+        private readonly IAuthJwtService _authService;
     
-        public LoginController(AuthJwtService authService)
+        public LoginController(IAuthJwtService authService)
         {
             _authService = authService;
         }
@@ -30,12 +31,13 @@ namespace Chat_BlazorServer.Controllers
             {
                 var user = await _authService.Auth(userData);
                 var token = _authService.GenerateJwtToken(user);
-                return Ok(token); 
+                return Ok(token);
             }
             catch
             {
                 return NotFound("User not found");
-            }   
+            }
+
         }
 
         [HttpPost("registration")]

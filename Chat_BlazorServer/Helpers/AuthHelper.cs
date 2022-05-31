@@ -1,24 +1,25 @@
 ﻿using Blazored.LocalStorage;
+using Chat_BlazorServer.Helpers.Abstractions;
 
 namespace Chat_BlazorServer.Helpers
 {
-    public class AuthHelper
+    public class AuthHelper : IAuthHelper
     {
-        private readonly HttpClient httpClient;
         private readonly ILocalStorageService localStorage;
 
-        public AuthHelper(HttpClient httpClient, ILocalStorageService localStorage)
+        public AuthHelper(ILocalStorageService localStorage)
         {
-            this.httpClient = httpClient;
             this.localStorage = localStorage;
         }
-
-        public async Task SetAuthHeader()
+        
+        public async Task<string> GetToken()
         {
-            var token = await this.localStorage.GetItemAsync<string>("authToken");
+            var authToken = await localStorage.GetItemAsStringAsync("authToken");
 
-            this.httpClient.DefaultRequestHeaders.Authorization
-                = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            if (authToken is null)
+                throw new Exception("NOT AUTHORIZED");
+
+            return authToken.Trim('"');
         }
     }
 }

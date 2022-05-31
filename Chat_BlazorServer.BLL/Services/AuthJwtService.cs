@@ -11,11 +11,11 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Chat_BlazorServer.BLL.Abstractions;
-
+using Chat_BlazorServer.BLL.Services.Abstractions;
 
 namespace Chat_BlazorServer.BLL.Services
 {
-    public class AuthJwtService : IAuth, IJwtToken
+    public class AuthJwtService : IAuthJwtService
     {
         private readonly IConfiguration _config;
         private readonly UserManager<ApplicationUser> _userManager;

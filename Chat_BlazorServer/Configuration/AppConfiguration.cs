@@ -17,12 +17,14 @@ using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.Extensions.DependencyInjection;
 using Chat_BlazorServer.Services.Abstractions;
+using Chat_BlazorServer.BLL.Services.Abstractions;
+using Chat_BlazorServer.Helpers.Abstractions;
 
 namespace Chat_BlazorServer.Configuration
 {
     public static class AppConfiguration
     {
-        public static WebApplicationBuilder AddServices(WebApplicationBuilder builder)
+        public static WebApplicationBuilder AddServicesAsync(WebApplicationBuilder builder)
         {
             // Add services to the container.
             builder.Services.AddRazorPages();
@@ -32,9 +34,9 @@ namespace Chat_BlazorServer.Configuration
             //todo remove this \/ \/ \/
             builder.Services.AddSingleton<WeatherForecastService>();
 
-            builder.Services.AddDbContext<ApplicationContext>(options =>
+            builder.Services.AddDbContext<ApplicationContext>(opt =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+                opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
                 b => b.MigrationsAssembly("Chat_BlazorServer"));
             });
 
@@ -45,20 +47,19 @@ namespace Chat_BlazorServer.Configuration
                     opt.Password.RequireUppercase = false;
                     opt.Password.RequireNonAlphanumeric = false;
                 })
-                .AddEntityFrameworkStores<ApplicationContext>();
+                            .AddEntityFrameworkStores<ApplicationContext>();
 
-            builder.Services.AddScoped<AuthJwtService>();
+            builder.Services.AddScoped<IAuthJwtService, AuthJwtService>();
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
-            builder.Services
-                .AddAuthorization()
-                .AddAuthentication(options =>
+            builder.Services.AddAuthorization()
+                            .AddAuthentication(opt =>
                 {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-                .AddJwtBearer(opt =>
+                            .AddJwtBearer(opt =>
                 {
                     opt.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -72,12 +73,22 @@ namespace Chat_BlazorServer.Configuration
                     };
                 });
 
-            //Blazor things 
-            builder.Services.AddHttpClient();
+            //Client things 
+            
+
             builder.Services.AddBlazoredLocalStorage();
 
-            builder.Services.AddTransient<IRestService, RestService>();
+            builder.Services.AddScoped<IAuthHelper, AuthHelper>();
 
+            builder.Services.AddHttpClient("BaseClient", client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["Url:BaseUrl"]);
+            });
+
+            builder.Services.AddHttpClient();
+
+            builder.Services.AddScoped<IChatClient, ChatClient>();
+            
             return builder;
         }
     }
