@@ -19,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Chat_BlazorServer.Services.Abstractions;
 using Chat_BlazorServer.BLL.Services.Abstractions;
 using Chat_BlazorServer.Helpers.Abstractions;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Chat_BlazorServer.Configuration
 {
@@ -79,6 +80,7 @@ namespace Chat_BlazorServer.Configuration
             builder.Services.AddBlazoredLocalStorage();
 
             builder.Services.AddScoped<IAuthHelper, AuthHelper>();
+            builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 
             builder.Services.AddHttpClient("BaseClient", client =>
             {

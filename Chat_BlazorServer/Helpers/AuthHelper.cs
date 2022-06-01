@@ -17,7 +17,7 @@ namespace Chat_BlazorServer.Helpers
             var authToken = await localStorage.GetItemAsStringAsync("authToken");
 
             if (authToken is null)
-                throw new Exception("NOT AUTHORIZED");
+                return null;
 
             return authToken.Trim('"');
         }

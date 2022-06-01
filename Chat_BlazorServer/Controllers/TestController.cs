@@ -12,7 +12,7 @@ namespace Chat_BlazorServer.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok("U are authed");
+            return Ok();
         }
     }
 }

@@ -10,6 +10,7 @@
 @inject HttpClient _httpClient
 @inject ILocalStorageService _localStorage
 @inject IChatClient _chatClient
+@inject NavigationManager NavManager
 
 <h3>Log in, please</h3>
 
@@ -34,15 +35,15 @@
 
     private async void HandleLogin()
     {
-       
+
         var client = _httpClientFactory.CreateClient("BaseClient");
         var response = await client.PostAsJsonAsync("Login/login", user);
 
         if(response.IsSuccessStatusCode)
         {
             await SaveToken(response);
+            NavManager.NavigateTo("/");
         }
-  
     }
 
     private async Task SaveToken(HttpResponseMessage response)
