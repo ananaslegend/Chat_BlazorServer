@@ -42,7 +42,8 @@
         if(response.IsSuccessStatusCode)
         {
             await SaveToken(response);
-            NavManager.NavigateTo("/");
+            NavManager.NavigateTo("/", forceLoad: true);
+            StateHasChanged();
         }
     }
 
