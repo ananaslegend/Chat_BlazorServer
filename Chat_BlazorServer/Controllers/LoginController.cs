@@ -37,7 +37,6 @@ namespace Chat_BlazorServer.Controllers
             {
                 return NotFound("User not found");
             }
-
         }
 
         [HttpPost("registration")]

@@ -1,6 +1,5 @@
 ﻿using Blazored.LocalStorage;
 using Chat_BlazorServer.BLL.Services;
-using Chat_BlazorServer.Controllers;
 using Chat_BlazorServer.Data;
 using Chat_BlazorServer.Data.Context;
 using Chat_BlazorServer.DataAccess;
@@ -12,12 +11,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using Microsoft.Extensions.DependencyInjection;
 using Chat_BlazorServer.BLL.Services.Abstractions;
 using Chat_BlazorServer.Helpers.Abstractions;
-using Microsoft.AspNetCore.Components.Authorization;
+using Chat_BlazorServer.Services;
 
 namespace Chat_BlazorServer.Configuration
 {
@@ -39,7 +35,7 @@ namespace Chat_BlazorServer.Configuration
                 b => b.MigrationsAssembly("Chat_BlazorServer"));
             });
 
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>( opt => 
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opt =>
                 {
                     opt.Password.RequireDigit = true;
                     opt.Password.RequiredLength = 5;
@@ -53,24 +49,24 @@ namespace Chat_BlazorServer.Configuration
 
             builder.Services.AddAuthorization()
                             .AddAuthentication(opt =>
-                {
-                    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
+                            {
+                                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                                opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                            })
                             .AddJwtBearer(opt =>
-                {
-                    opt.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidIssuer = builder.Configuration["JWT:Issuer"],
-                        ValidAudience = builder.Configuration["JWT:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
-                    };
-                });
+                            {
+                                opt.TokenValidationParameters = new TokenValidationParameters
+                                {
+                                    ValidateIssuer = true,
+                                    ValidateAudience = true,
+                                    ValidateLifetime = true,
+                                    ValidIssuer = builder.Configuration["JWT:Issuer"],
+                                    ValidAudience = builder.Configuration["JWT:Audience"],
+                                    IssuerSigningKey = new SymmetricSecurityKey(
+                                    Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+                                };
+                            });
 
             //Client things 
             builder.Services.AddBlazoredLocalStorage();
@@ -81,7 +77,9 @@ namespace Chat_BlazorServer.Configuration
             {
                 client.BaseAddress = new Uri(builder.Configuration["Url:BaseUrl"]);
             });
-            
+
+            builder.Services.AddScoped<ChatClient>();
+
             return builder;
         }
     }
