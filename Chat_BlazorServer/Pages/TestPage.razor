@@ -1,50 +1,37 @@
 ﻿@page "/test"
+@inherits BaseAuth
 
 @inject NavigationManager NavManager
 @inject ILocalStorageService _localStorage
 @inject HttpClient _httpClient
-@inject IChatClient restService
 @inject IHttpClientFactory _httpClientFactory
-@inject IAuthHelper authHelper
+@inject ITokenHelper tokenHelper
 
-@using Blazored.LocalStorage
-@using Chat_BlazorServer.Domain.DTOs
-@using Chat_BlazorServer.Controllers
-@using Chat_BlazorServer.Helpers
-@using Chat_BlazorServer.Helpers.Abstractions
-@using Chat_BlazorServer.Services.Abstractions
-@using RestSharp
-@using System.Net.Http.Headers
-
-
-<h3>Test!</h3>
-
-<button class="btn btn-primary" @onclick="HandleTest">Try!</button>
-
-
+<h3>Test page!</h3>
 
 @code
 {
-    string response;
+    string responseStatus = "In process";
     private bool responseCode;
 
-    private async void HandleTest()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        try
+        if (firstRender)
         {
             var client = _httpClientFactory.CreateClient("BaseClient");
 
-            var token = await authHelper.GetToken();
+            var token = await tokenHelper.GetTokenAsync();
 
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await client.GetStringAsync("Test/");
-    
-        }
-        catch
-        {
-            response = "ERROR NOT AUTHORIZED";
+            var response = await client.GetAsync("Test/");
+
+            UserAccessCheck(response, () =>
+            {
+                responseStatus = "authed!";
+                StateHasChanged();
+            });
         }
     }
 }

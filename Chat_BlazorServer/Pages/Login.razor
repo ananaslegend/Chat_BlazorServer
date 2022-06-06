@@ -1,16 +1,10 @@
 ﻿@page "/login"
-@using Blazored.LocalStorage
-@using Chat_BlazorServer.Domain.DTOs
-@using Chat_BlazorServer.Services
-@using System.Text.Json
-@using Chat_BlazorServer.Services.Abstractions
-@using RestSharp
 @inject NavigationManager NavManager
 @inject IHttpClientFactory _httpClientFactory
 @inject HttpClient _httpClient
 @inject ILocalStorageService _localStorage
-@inject IChatClient _chatClient
 @inject NavigationManager NavManager
+@inject ITokenHelper tokenHelper
 
 <h3>Log in, please</h3>
 
@@ -27,8 +21,6 @@
     <button class="btn btn-primary" type="submit">Login</button>
 </EditForm>
 
-
-
 @code
 {
     private UserLoginDTO user = new();
@@ -41,17 +33,9 @@
 
         if(response.IsSuccessStatusCode)
         {
-            await SaveToken(response);
-            NavManager.NavigateTo("/", forceLoad: true);
+            await tokenHelper.WriteTokenAsync(response);
+            NavManager.NavigateTo("/", forceLoad: true);//!
             StateHasChanged();
         }
     }
-
-    private async Task SaveToken(HttpResponseMessage response)
-    {
-        var responseContent = await response.Content.ReadAsStringAsync();
-
-        await _localStorage.SetItemAsync<string>("authToken", responseContent);
-    }
-
  }

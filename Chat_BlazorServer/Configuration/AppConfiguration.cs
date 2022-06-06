@@ -7,7 +7,6 @@ using Chat_BlazorServer.DataAccess;
 using Chat_BlazorServer.DataAccess.Abstractions;
 using Chat_BlazorServer.Domain.Models;
 using Chat_BlazorServer.Helpers;
-using Chat_BlazorServer.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +15,6 @@ using System.Text;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.Extensions.DependencyInjection;
-using Chat_BlazorServer.Services.Abstractions;
 using Chat_BlazorServer.BLL.Services.Abstractions;
 using Chat_BlazorServer.Helpers.Abstractions;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -75,21 +73,14 @@ namespace Chat_BlazorServer.Configuration
                 });
 
             //Client things 
-            
-
             builder.Services.AddBlazoredLocalStorage();
 
-            builder.Services.AddScoped<IAuthHelper, AuthHelper>();
-            builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+            builder.Services.AddScoped<ITokenHelper, TokenHelper>();
 
             builder.Services.AddHttpClient("BaseClient", client =>
             {
                 client.BaseAddress = new Uri(builder.Configuration["Url:BaseUrl"]);
             });
-
-            builder.Services.AddHttpClient();
-
-            builder.Services.AddScoped<IChatClient, ChatClient>();
             
             return builder;
         }
