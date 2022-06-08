@@ -14,7 +14,7 @@ namespace Chat_BlazorServer.Domain.Models
         public int Id { get; set; }
         public ChatType Type { get; set; }
         public string? Name { get; set; }
-        public ICollection<ApplicationUser> ChatUsers { get; set; }
+        public ICollection<ApplicationUser> ChatUsers { get; set; } = new List<ApplicationUser>();
         public ICollection<Message>? Messages { get; set; }
     }
 }

@@ -1,0 +1,32 @@
+﻿@inject ChatClient chatClient
+@inject ILocalStorageService localStorage
+
+<h3>CreatePrivateChat</h3>
+
+<EditForm Model="chat" OnSubmit="CreateChat">
+    <div class="form-group" style="margin-bottom: 20px;">
+        <label for="user">User: </label>
+        <InputText id="user" class="form-controll" @bind-Value="chat.CompanionName" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">Create</button>
+</EditForm>
+
+@code {
+    CreatePrivateChatModel chat = new();
+
+    private async void CreateChat()
+    {
+        chat.ChatName = chat.UserName + " " + chat.CompanionName;
+
+        await chatClient.CreatePrivateChat(chat);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var userName = await localStorage.GetItemAsStringAsync("UserName");
+        userName = userName.Trim('"');
+
+        chat.UserName = userName;
+    }
+}

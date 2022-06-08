@@ -1,0 +1,71 @@
+﻿@page "/joinchat"
+@using Chat_BlazorServer.Domain.Enums
+@inherits BaseAuth
+
+@inject IHttpClientFactory _httpClientFactory
+@inject ITokenHelper tokenHelper
+@inject ChatClient chatClient
+
+@if (status == AuthStatus.NotSet)
+{
+    <LoadingComponent />
+}
+else
+{
+    <div>
+        <button class="btn btn-primary" @onclick="Private" style="margin-right: 20px">Private</button>
+        <button class="btn btn-primary" @onclick="Public" style="margin-right: 20px">Public</button>
+        <button class="btn btn-primary" @onclick="Search" style="margin-right: 20px">Search</button>
+    </div>
+    <br />
+
+    @if(mode == "Private")
+    {
+        <CreatePrivateChat />
+    }
+    @if(mode == "Public")
+    {
+        <CreatePublicChat />
+    }
+    @if(mode == "Search")
+    {
+        <SearchChat />
+    }
+}
+
+
+
+@code {
+    string mode = "Private";
+    AuthStatus status = AuthStatus.NotSet;
+
+    private async void Private()
+    {
+        mode = "Private";
+        StateHasChanged();
+    }
+    private async void Public()
+    {
+        mode = "Public";
+        StateHasChanged();
+    }
+    private async void Search()
+    {
+        mode = "Search";
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var response = await chatClient.GetAuthAsync("Test/");
+
+            UserAccessCheck(response, () =>
+            {
+                status = AuthStatus.Authed;
+                StateHasChanged();
+            });
+        }
+    }
+}

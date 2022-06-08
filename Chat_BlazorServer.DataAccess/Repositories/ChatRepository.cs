@@ -20,5 +20,15 @@ namespace Chat_BlazorServer.DataAccess.Repositories
         {
             get { return _context as ApplicationContext; }
         }
+
+        public ICollection<Chat> GetChatsByName(string chatName)
+        {
+            return (ICollection<Chat>)ApplicationContext.Chats.Where(c => c.Name == chatName);
+        }
+
+        //public void AddUserToChat(string chatId, string userId)
+        //{
+        //    ApplicationContext.Chats.FirstOrDefault().ChatUsers.Add();
+        //}
     }
 }

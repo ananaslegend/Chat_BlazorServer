@@ -9,6 +9,6 @@ namespace Chat_BlazorServer.DataAccess.Abstractions
 {
     public interface IChatRepository : IGenericRepository<Chat>
     {
-
+        public ICollection<Chat> GetChatsByName(string chatName);
     }
 }

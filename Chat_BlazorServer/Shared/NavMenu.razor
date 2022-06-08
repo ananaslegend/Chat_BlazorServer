@@ -1,6 +1,6 @@
 ﻿@inject IHttpClientFactory _httpClientFactory
 @inject ITokenHelper tokenHelper
-@inject ILocalStorageService LocalStorage
+@inject ILocalStorageService localStorage
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -68,6 +68,7 @@
     {
         //todo auth manager
         await tokenHelper.RemoveTokenAsync();
+        await localStorage.RemoveItemAsync("UserName");
         StateHasChanged();
     }
 

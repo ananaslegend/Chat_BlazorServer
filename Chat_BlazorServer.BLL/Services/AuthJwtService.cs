@@ -46,7 +46,6 @@ namespace Chat_BlazorServer.BLL.Services
             if (existUser != null)
                 throw new Exception("Username is already exist");
             
-
             var user = new ApplicationUser { UserName = userData.UserName };
             var result = await _userManager.CreateAsync(user, userData.Password);
 

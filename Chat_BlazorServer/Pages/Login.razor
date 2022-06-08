@@ -2,7 +2,7 @@
 @inject NavigationManager NavManager
 @inject IHttpClientFactory _httpClientFactory
 @inject HttpClient _httpClient
-@inject ILocalStorageService _localStorage
+@inject ILocalStorageService localStorage
 @inject NavigationManager NavManager
 @inject ITokenHelper tokenHelper
 
@@ -33,6 +33,7 @@
 
         if(response.IsSuccessStatusCode)
         {
+            await localStorage.SetItemAsync<string>("UserName", user.UserName);
             await tokenHelper.WriteTokenAsync(response);
             NavManager.NavigateTo("/", forceLoad: true);//!
             StateHasChanged();

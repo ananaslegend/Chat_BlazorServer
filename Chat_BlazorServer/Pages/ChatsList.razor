@@ -1,17 +1,12 @@
-﻿@page "/test"
+﻿@page "/chats"
 @inherits BaseAuth
 
+@inject IHttpClientFactory _httpClientFactory
+@inject ITokenHelper tokenHelper
 @inject ChatClient chatClient
 
-<h3>Test page!</h3>
 
-@if (status == AuthStatus.NotSet)
-{
-    <LoadingComponent />
-}
-
-@code
-{
+@code {
     AuthStatus status = AuthStatus.NotSet;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
