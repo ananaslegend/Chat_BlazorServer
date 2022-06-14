@@ -1,4 +1,4 @@
-﻿@page "/joinchat"
+﻿@page "/createchat"
 @using Chat_BlazorServer.Domain.Enums
 @inherits BaseAuth
 
@@ -15,7 +15,6 @@ else
     <div>
         <button class="btn btn-primary" @onclick="Private" style="margin-right: 20px">Private</button>
         <button class="btn btn-primary" @onclick="Public" style="margin-right: 20px">Public</button>
-        <button class="btn btn-primary" @onclick="Search" style="margin-right: 20px">Search</button>
     </div>
     <br />
 
@@ -26,10 +25,6 @@ else
     @if(mode == "Public")
     {
         <CreatePublicChat />
-    }
-    @if(mode == "Search")
-    {
-        <SearchChat />
     }
 }
 
@@ -49,11 +44,7 @@ else
         mode = "Public";
         StateHasChanged();
     }
-    private async void Search()
-    {
-        mode = "Search";
-        StateHasChanged();
-    }
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

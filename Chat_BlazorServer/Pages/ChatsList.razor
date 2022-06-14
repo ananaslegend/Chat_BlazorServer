@@ -1,22 +1,60 @@
 ﻿@page "/chats"
 @inherits BaseAuth
 
-@inject IHttpClientFactory _httpClientFactory
-@inject ITokenHelper tokenHelper
+@inject NavigationManager NavManager
+@inject ILocalStorageService localStorage
 @inject ChatClient chatClient
 
+@if (status == AuthStatus.NotSet)
+{
+    <LoadingComponent />
+}
+
+@if (chats.Any())
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Chat Name</th>
+                <th>Type</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var chat in chats)
+            {
+                <tr>
+                    <td>@chat.Name</td>
+                    <td>@chat.Type</td>
+                    <td><button class="btn btn-primary" @onclick = "() => EnterChat(chat.Id)">Enter</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @code {
     AuthStatus status = AuthStatus.NotSet;
+    List<ChatDisplayModel> chats = new();
+    NameModel userName = new();
+
+    private void EnterChat(int chatId)
+    {
+        NavManager.NavigateTo("/");
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var response = await chatClient.GetAuthAsync("Test/");
+            var user = await localStorage.GetItemAsStringAsync("UserName");
+            userName.Title = user.Trim('"');
+            
+            var responseWithChats = await chatClient.GetResponseAllUserChatsAsync(userName);
 
-            UserAccessCheck(response, () =>
+            UserAccessCheck(responseWithChats, () =>
             {
+                chats = responseWithChats.Content.ReadFromJsonAsync<List<ChatDisplayModel>>().Result;
                 status = AuthStatus.Authed;
                 StateHasChanged();
             });

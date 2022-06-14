@@ -1,0 +1,75 @@
+﻿@page "/search"
+@inherits BaseAuth
+
+@inject ChatClient chatClient
+@inject ILocalStorageService localStorage
+
+<h3>Search chat</h3><br />
+<EditForm Model="chatName" OnSubmit="SearchChats">
+    <div class="form-group" style="margin-bottom: 20px;">
+        <label for="name">Chat name: </label>
+        <InputText id="name" class="form-controll" @bind-Value="chatName.Title" />
+    </div>
+    <button class="btn btn-primary" type="submit">Search</button>
+</EditForm>
+
+@if (chats.Any())
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Chat Name</th>
+                <th>Type</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var chat in chats)
+            {
+                <tr>
+                    <td>@chat.Name</td>
+                    <td>@chat.Type</td>
+                    <td><button class="btn btn-primary" @onclick = "() => JoinChat(chat.Id)">Join</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code 
+{
+    AuthStatus status = AuthStatus.NotSet;
+    NameModel chatName = new();
+    string userName;
+    List<ChatDisplayModel> chats = new List<ChatDisplayModel>();
+
+    private async void SearchChats()
+    {
+        chats = (List<ChatDisplayModel>) await chatClient.GetChatsByName(chatName);
+        StateHasChanged();
+    }
+
+    private async void JoinChat(int chatId)
+    {
+        await chatClient.JoinToChat(chatId, userName);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var user = await localStorage.GetItemAsStringAsync("UserName");
+        user = user.Trim('"');
+
+        userName = user;
+
+        if (firstRender)
+        {
+            var response = await chatClient.GetAuthAsync("Test/");
+
+            UserAccessCheck(response, () =>
+            {
+                status = AuthStatus.Authed;
+                StateHasChanged();
+            });
+        }
+    }
+}

@@ -22,16 +22,19 @@ namespace Chat_BlazorServer.Controllers
             this.userManager = userManager;
             this.dbUnit = dbUnit;
         }
-        [HttpGet("all_user_chats/{Id}")]
-        public async Task<IActionResult> GetAllUserChats([FromRoute] string Id)
+        [HttpPost("all_user_chats/")]
+        public async Task<IActionResult> GetAllUserChats([FromBody] NameModel userName)
         {
-            ICollection<Chat> list = userManager.Users.FirstOrDefault(user => user.Id == Id).UserChats;
+            //ICollection<Chat> list = userManager.Users.FirstOrDefault(user => user.UserName == userName.Title).UserChats;
+            var user = userManager.FindByNameAsync(userName.Title).Result;
 
-            ICollection<ChatDisplay> userChats = new List<ChatDisplay>();
+            IEnumerable<Chat> list = dbUnit.Chats.GetAllUserChats(user);
+
+            ICollection<ChatDisplayModel> userChats = new List<ChatDisplayModel>();
             foreach (Chat item in list)
             {
                 userChats.Add(
-                    new ChatDisplay()
+                    new ChatDisplayModel()
                     {
                         Name = item.Name,
                         Type = item.Type
@@ -41,20 +44,21 @@ namespace Chat_BlazorServer.Controllers
             return Ok(userChats);
         }
 
-        [HttpGet("find_chats/{chatname}")]
-        public async Task<IActionResult> FindChats([FromRoute] string chatname)
+        [HttpPost("find_chats/")]
+        public async Task<IActionResult> FindChats([FromBody] NameModel chatname)
         {
-            var list = dbUnit.Chats.GetChatsByName(chatname);
+            var list = dbUnit.Chats.GetChatsByName(chatname.Title);
 
-            ICollection<ChatNameIdDto> chats = new List<ChatNameIdDto>();
+            ICollection<ChatDisplayModel> chats = new List<ChatDisplayModel>();
 
             foreach (Chat item in list)
             {
                 chats.Add(
-                    new ChatNameIdDto()
+                    new ChatDisplayModel()
                     {
                         Name = item.Name,
-                        Id = item.Id
+                        Id = item.Id,
+                        Type = item.Type
                     });
             }
 
@@ -82,10 +86,32 @@ namespace Chat_BlazorServer.Controllers
             return Ok();
         }
 
-        [HttpGet("join_to_chat/{userId}/{chatId}")]
-        public async Task<IActionResult> JoinToChat([FromRoute] string chatId, [FromRoute] string userId)
+        [HttpPost("create_public_chat")]
+        public async Task<IActionResult> CreatePublicChat([FromBody] CreatePublicChatModel chatModel)
         {
-            
+            Chat newChat = new()
+            {
+                Name = chatModel.ChatName,
+                Type = chatModel.Type,
+            };
+            var user = userManager.Users.FirstOrDefault(x => x.UserName == chatModel.UserName);
+
+            newChat.ChatUsers.Add(user);
+
+            dbUnit.Chats.Add(newChat);
+
+            await dbUnit.CompleteAsync();
+
+            return Ok();
+        }
+
+        [HttpPost("join_to_chat/{chatId}/{userName}")]
+        public async Task<IActionResult> JoinToChat([FromRoute] string chatId, [FromRoute] string userName)
+        {
+            var user = userManager.FindByNameAsync(userName).Result;
+
+            dbUnit.Chats.AddUserToChat(chatId, user);
+            await dbUnit.CompleteAsync();
 
             return Ok();
         }

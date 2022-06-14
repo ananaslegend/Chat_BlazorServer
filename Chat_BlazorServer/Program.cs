@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Chat_BlazorServer.Configuration;
+using Chat_BlazorServer.Hubs;
 
 var builder = AppConfiguration
                 .AddServicesAsync(WebApplication
@@ -36,6 +37,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapBlazorHub();
+app.MapHub<ChatHub>("/chathub");
 
 app.MapFallbackToPage("/_Host");
 

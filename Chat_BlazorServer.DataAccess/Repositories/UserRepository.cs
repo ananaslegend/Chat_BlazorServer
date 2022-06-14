@@ -16,7 +16,7 @@ namespace Chat_BlazorServer.DataAccess.Repositories
 
         }
 
-        public ApplicationUser FindUser(string userName, string pass)
+        public ApplicationUser FindUser(string userName)
         {
             var user = ApplicationContext
                 .Users

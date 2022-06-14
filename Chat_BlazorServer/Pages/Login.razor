@@ -35,7 +35,7 @@
         {
             await localStorage.SetItemAsync<string>("UserName", user.UserName);
             await tokenHelper.WriteTokenAsync(response);
-            NavManager.NavigateTo("/", forceLoad: true);//!
+            NavManager.NavigateTo("/", forceLoad: true);
             StateHasChanged();
         }
     }

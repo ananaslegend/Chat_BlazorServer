@@ -1,5 +1,30 @@
-﻿<h3>CreatePublicChat</h3>
+﻿@inject ChatClient chatClient
+@inject ILocalStorageService localStorage
 
-@code {
+<h3>CreatePublicChat</h3><br />
+<EditForm Model="chat" OnSubmit="CreateChat">
+    <div class="form-group" style="margin-bottom: 20px;">
+        <label for="name">Name: </label>
+        <InputText id="name" class="form-controll" @bind-Value="chat.ChatName" />
+    </div>
 
+    <button class="btn btn-primary" type="submit">Create</button>
+</EditForm>
+
+@code 
+{
+    CreatePublicChatModel chat = new();
+
+    private async void CreateChat()
+    {
+        await chatClient.CreateChat(chat, chat.Type);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var userName = await localStorage.GetItemAsStringAsync("UserName");
+        userName = userName.Trim('"');
+
+        chat.UserName = userName;
+    }
 }

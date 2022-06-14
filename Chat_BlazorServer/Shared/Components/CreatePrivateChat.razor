@@ -2,6 +2,7 @@
 @inject ILocalStorageService localStorage
 
 <h3>CreatePrivateChat</h3>
+<br />
 
 <EditForm Model="chat" OnSubmit="CreateChat">
     <div class="form-group" style="margin-bottom: 20px;">
@@ -19,7 +20,7 @@
     {
         chat.ChatName = chat.UserName + " " + chat.CompanionName;
 
-        await chatClient.CreatePrivateChat(chat);
+        await chatClient.CreateChat(chat, chat.Type);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -9,6 +9,6 @@ namespace Chat_BlazorServer.DataAccess.Abstractions
 {
     public interface IMessageRepository : IGenericRepository<Message>
     {
-           
+        public Task<ICollection<Message>> GetMessagePack(int chatId, int loaded, int batch);
     }
 }

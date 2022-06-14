@@ -29,6 +29,8 @@ namespace Chat_BlazorServer.Configuration
             //todo remove this \/ \/ \/
             builder.Services.AddSingleton<WeatherForecastService>();
 
+            builder.Services.AddSignalR();
+
             builder.Services.AddDbContext<ApplicationContext>(opt =>
             {
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
