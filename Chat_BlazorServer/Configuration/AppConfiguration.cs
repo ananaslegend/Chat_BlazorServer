@@ -14,6 +14,8 @@ using System.Text;
 using Chat_BlazorServer.BLL.Services.Abstractions;
 using Chat_BlazorServer.Helpers.Abstractions;
 using Chat_BlazorServer.Services;
+using Microsoft.AspNetCore.ResponseCompression;
+using Chat_BlazorServer.Hubs;
 
 namespace Chat_BlazorServer.Configuration
 {
@@ -28,8 +30,6 @@ namespace Chat_BlazorServer.Configuration
             builder.Services.AddControllers();
             //todo remove this \/ \/ \/
             builder.Services.AddSingleton<WeatherForecastService>();
-
-            builder.Services.AddSignalR();
 
             builder.Services.AddDbContext<ApplicationContext>(opt =>
             {
@@ -69,6 +69,17 @@ namespace Chat_BlazorServer.Configuration
                                     Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
                                 };
                             });
+
+            builder.Services.AddSignalR(opt =>
+            {
+                opt.EnableDetailedErrors = true;
+
+            });
+
+            builder.Services.AddResponseCompression(opt =>
+                {
+                    opt.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream" });
+                });
 
             //Client things 
             builder.Services.AddBlazoredLocalStorage();

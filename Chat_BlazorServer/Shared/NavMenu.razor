@@ -61,17 +61,20 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var token = await tokenHelper.GetTokenAsync();
+        if (firstRender)
+        {
+            var token = await tokenHelper.GetTokenAsync();
 
-        if (token == null)
-        {
-            authorizeStatus = "NotAuthed"; 
-            StateHasChanged();
-        }
-        else
-        {
-            authorizeStatus = "Authed";
-            StateHasChanged();
+            if (token == null)
+            {
+                authorizeStatus = "NotAuthed";
+                StateHasChanged();
+            }
+            else
+            {
+                authorizeStatus = "Authed";
+                StateHasChanged();
+            }
         }
     }
 

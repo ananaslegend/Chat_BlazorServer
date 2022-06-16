@@ -1,0 +1,141 @@
+﻿@page "/chatTest/{chatId:int}"
+@inherits BaseAuth
+@implements IAsyncDisposable
+
+@using Chat_BlazorServer.Domain.Models
+@using Microsoft.AspNetCore.SignalR.Client
+
+@inject ChatClient chatClient
+@inject NavigationManager NavManager
+@inject ILocalStorageService localStorage
+
+@if (status == AuthStatus.NotSet)
+{
+    <LoadingComponent />
+}
+else
+{
+    <div class="container overflow-auto shadow-sm p-3 mb-5 bg-white rounded" style="height: 500px;">
+        @if(!messages.Any())
+        {
+            <p>No messages yet</p>
+        }
+
+        @foreach (var item in messages)
+        {
+            <div class="row mb-3 d-flex">
+                <div class="card shadow" style="width: 18rem;">
+                    <div class="card-header">
+                        @item.Author
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">@item.Data</li>
+                    </ul>
+                    <div class="card-footer">
+                        <span class="small">@item.Date.ToString("HH:mm | MMM dd")</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-9">
+                <textarea @bind="msgInput" class="form-control" placeholder="Ur msg..."></textarea>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-primary" type="button" @onclick="Send" >Send</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    AuthStatus status = AuthStatus.NotSet;
+
+    [Parameter]
+    public int chatId { get; set; }
+    List<Message> messages = new();
+    public HubConnection hubConnection;
+
+
+
+    int batch = 20;
+    int loaded = 0;
+    string msgInput = String.Empty;
+    string userName = String.Empty;
+
+    public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
+
+    private async Task Send()
+    {
+        if(!string.IsNullOrEmpty(msgInput))
+        {
+            CreateMessage createMessage = new()
+            {
+                ChatId = Convert.ToInt32(chatId),
+                MessageText = msgInput,
+                SenderName = userName
+            };
+
+            if(!IsConnected)
+            {
+                    await hubConnection.StartAsync();
+                    await hubConnection.SendAsync("JoinRoom", chatId);
+                  
+            }
+
+            await hubConnection.SendAsync("SendMessage", createMessage);
+            
+            msgInput = String.Empty;
+
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var response = await chatClient.GetAuthAsync("Test/");
+
+            UserAccessCheck(response, async () =>
+            {             
+
+                hubConnection = new HubConnectionBuilder()
+                                        .WithUrl("https://localhost:44300/chathub")
+                                        .Build();
+
+                //hubConnection.Closed += async (error) =>
+                //{
+                //    await hubConnection.StartAsync();
+                //    await hubConnection.SendAsync("JoinRoom", chatId);
+                //};
+
+                hubConnection.On<Message>("AddMessage", (newMessage) =>
+                {
+                    messages.Add(newMessage);
+                    loaded += 1;
+                    InvokeAsync(StateHasChanged);
+                });
+
+                await hubConnection.StartAsync();
+
+                var user = await localStorage.GetItemAsStringAsync("UserName");
+                user = user.Trim('"');
+                userName = user;
+
+                status = AuthStatus.Authed;
+                StateHasChanged();
+            }); 
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if(hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

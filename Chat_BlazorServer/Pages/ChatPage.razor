@@ -41,7 +41,6 @@ else
         </div>
         <div class="inut-group">
             <EditForm Model="createMessage" OnValidSubmit="AddMessage" style="max-width:500px;">
-                <ValidationSummary />
                 <div>
                     <InputText class="form-control" @bind-Value="msg"></InputText>
                     <button class="btn btn-primary" type="submit">Send</button>
@@ -56,12 +55,12 @@ else
     public int chatId { get; set; }
     AuthStatus status = AuthStatus.NotSet;
     List<Message> messages = new();
-    private HubConnection? hubConnection;
+    private HubConnection hubConnection;
     int batch = 20;
     int loaded = 0;
     CreateMessage createMessage = new();
-    string msg = null;
-    string userName;
+    string msg = String.Empty;
+    string userName = String.Empty;
 
     private async Task AddMessage()
     {
