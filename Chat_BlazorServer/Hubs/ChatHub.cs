@@ -1,5 +1,7 @@
 ﻿using Chat_BlazorServer.DataAccess;
+using Chat_BlazorServer.DataAccess.Abstractions;
 using Chat_BlazorServer.Domain.Models;
+using Chat_BlazorServer.Services;
 using Chat_BlazorServer.Shared.Components;
 using Microsoft.AspNetCore.SignalR;
 
@@ -7,11 +9,18 @@ namespace Chat_BlazorServer.Hubs
 {
     public class ChatHub : Hub
     {
-        private readonly UnitOfWork dbUnit;
+        private readonly IUnitOfWork dbUnit;
+        private readonly MessageService messageService;
 
-        public ChatHub(UnitOfWork dbUnit)
+        public ChatHub(IUnitOfWork dbUnit, MessageService messageService)
         {
             this.dbUnit = dbUnit;
+            this.messageService = messageService;
+        }
+        
+        public async Task SendTestMessage()
+        {
+            await Clients.Caller.SendAsync("ReceiveTestMessage", "hi from Server");
         }
         public async Task JoinRoom(int chatId)
         {
@@ -19,20 +28,15 @@ namespace Chat_BlazorServer.Hubs
         }
         public async Task SendMessage(CreateMessage createMessage)
         {
-            Message msg = new()
-            {
-                Author = dbUnit.Users.FindUser(createMessage.SenderName),
-                Chat = dbUnit.Chats.Get(createMessage.ChatId),
-                Data = createMessage.MessageText,
-                Date = DateTime.Now,
-                Reply = null
-            };
-            dbUnit.Messages.Add(msg);
-            await dbUnit.CompleteAsync();
-
-            await Clients.Group(Convert.ToString(createMessage.ChatId)).SendAsync("AddMessage", msg);
+            var newMessageItem = messageService.AddNewMessageAsync(createMessage).Result;
+            await Clients.Group(createMessage.ChatId.ToString())
+                         .SendAsync("AddMessage", newMessageItem);
         }
-
+        public async Task GetMassagePack(int chatId, int loaded, int batch)
+        {
+            var pack = messageService.GetMessagePack(chatId, loaded, batch).Result;
+            await Clients.Caller.SendAsync("AddMessagePack", pack);
+        }
     }
 
     //public class ChatHub : Hub

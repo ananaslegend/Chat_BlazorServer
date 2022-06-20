@@ -26,9 +26,9 @@ namespace Chat_BlazorServer.DataAccess.Repositories
             return _context.Set<TEntity>().Where(predecate);
         }
 
-        public TEntity Get(int id)
+        public async Task<TEntity> Get(int id)
         {
-            return _context.Set<TEntity>().Find(id);
+            return await _context.Set<TEntity>().FindAsync(id);
         }
 
         public IEnumerable<TEntity> GetAll()

@@ -16,6 +16,8 @@ using Chat_BlazorServer.Helpers.Abstractions;
 using Chat_BlazorServer.Services;
 using Microsoft.AspNetCore.ResponseCompression;
 using Chat_BlazorServer.Hubs;
+using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Chat_BlazorServer.Configuration
 {
@@ -25,9 +27,13 @@ namespace Chat_BlazorServer.Configuration
         {
             // Add services to the container.
             builder.Services.AddRazorPages();
+
             builder.Services.AddServerSideBlazor();
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                            .AddJsonOptions(x =>
+                                x.JsonSerializerOptions.ReferenceHandler 
+                                = ReferenceHandler.IgnoreCycles);
             //todo remove this \/ \/ \/
             builder.Services.AddSingleton<WeatherForecastService>();
 
@@ -49,6 +55,13 @@ namespace Chat_BlazorServer.Configuration
             builder.Services.AddScoped<IAuthJwtService, AuthJwtService>();
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
+            builder.Services.AddSignalR(o =>
+            {
+                o.EnableDetailedErrors = true;
+            });
+
+            builder.Services.AddTransient<MessageService>();
+
             builder.Services.AddAuthorization()
                             .AddAuthentication(opt =>
                             {
@@ -69,12 +82,6 @@ namespace Chat_BlazorServer.Configuration
                                     Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
                                 };
                             });
-
-            builder.Services.AddSignalR(opt =>
-            {
-                opt.EnableDetailedErrors = true;
-
-            });
 
             builder.Services.AddResponseCompression(opt =>
                 {

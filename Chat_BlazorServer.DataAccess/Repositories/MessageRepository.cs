@@ -20,6 +20,7 @@ namespace Chat_BlazorServer.DataAccess.Repositories
             var arr = ApplicationContext.Messages
                                             .Include(a => a.Author)
                                             .Include(r => r.Reply)
+                                            .Include(c => c.Chat)
                                             .Where(c => c.Chat.Id == chatId)
                                             .OrderByDescending(d => d.Date)
                                             .Skip(loaded)

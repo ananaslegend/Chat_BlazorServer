@@ -9,6 +9,6 @@ namespace Chat_BlazorServer.DataAccess.Abstractions
 {
     public interface IUserRepository : IGenericRepository<ApplicationUser>
     {
-        public ApplicationUser FindUser(string userName);
+        public Task<ApplicationUser> FindUser(string userName);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Chat_BlazorServer.Data.Context;
 using Chat_BlazorServer.DataAccess.Abstractions;
 using Chat_BlazorServer.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +17,12 @@ namespace Chat_BlazorServer.DataAccess.Repositories
 
         }
 
-        public ApplicationUser FindUser(string userName)
+        public async Task<ApplicationUser> FindUser(string userName)
         {
-            var user = ApplicationContext
+            var user = await ApplicationContext
                 .Users
                 .Where(u => u.UserName == userName)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             return user;
         }

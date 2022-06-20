@@ -37,10 +37,10 @@ app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
+    endpoints.MapControllers();
     endpoints.MapBlazorHub();
     endpoints.MapHub<ChatHub>("/chatHub");
     endpoints.MapFallbackToPage("/_Host");
-    endpoints.MapControllers();
 });
 
 app.Run();
