@@ -26,35 +26,27 @@ else
                 <div class="card shadow" style="width: 18rem;">
                     <div class="card-header">
                         @item.AuthorName
+                        @if(item.ReplyAuthorName != null)
+                        {
+                            <p>Replyed to @item.ReplyAuthorName</p>
+                        }
                     </div>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">@item.Data</li>
                     </ul>
                     <div class="card-footer">
                         <span class="small">@item.Date.ToString("HH:mm | MMM dd")</span>
-                        <button class="btn">
+                        <button class="btn" >
                             <span class="oi oi-loop-circular small"></span>
                         </button>
-                        <button class="btn">
+                        <button class="btn" @onclick="() => ChangeMessageModeToReply(item)">
                             <span class="oi oi-share small"></span>
                         </button>
                         <button class="btn">
                             <span class="oi oi-trash small"></span>
                         </button>
                     </div>
-                </div>
-               @* <div>
-                    <button class="btn">
-                        <span class="oi oi-loop-circular"></span>
-                    </button>
-                    <button class="btn">
-                        <span class="oi oi-share"></span>
-                    </button>
-                    <button class="btn">
-                        <span class="oi oi-trash"></span>
-                    </button>
-                </div>*@
-                
+                </div> 
             </div>
         }
     </div>
@@ -64,7 +56,14 @@ else
                 <textarea @bind="msgInput" class="form-control" placeholder="Ur msg..."></textarea>
             </div>
             <div class="col-3">
-                <button class="btn btn-primary" type="button" @onclick="Submit" >Send</button>
+                @if(messageMode == "reply")
+                {
+                    <button class="btn btn-primary" type="button" @onclick="Reply">Send</button>
+                }
+                @if(messageMode == "send")
+                {
+                    <button class="btn btn-primary" type="button" @onclick="Send">Send</button>
+                }
             </div>
         </div>
     </div>
@@ -76,8 +75,9 @@ else
     [Parameter]
     public int chatId { get; set; }
     List<MessageItem> messages = new();
+    MessageItem? replyingMessage = null;
     private HubConnection? hubConnection;
-    string messageMode = "Send";
+    string messageMode = "send";
 
     int batch = 20;
     int loaded = 0;
@@ -86,8 +86,52 @@ else
 
     public bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
 
-    private async Task Submit()
+    private void ChangeMessageModeToReply(MessageItem message)
     {
+        replyingMessage = message;
+        messageMode = "reply";
+        StateHasChanged();
+    }
+    private void ChangeMessageModeToUpdate()
+    {
+        messageMode = "update";
+        StateHasChanged();
+    }
+    private void ChangeMessageModeToDelete()
+    {
+        messageMode = "delete";
+        StateHasChanged();
+    }
+
+    private async Task Update()
+    {
+
+    }
+    private async Task Reply()
+    {
+        if(!string.IsNullOrEmpty(msgInput))
+        {
+            CreateMessage createMessage = new()
+            {
+                ChatId = Convert.ToInt32(chatId),
+                MessageText = msgInput,
+                SenderName = userName,
+                ReplyId = replyingMessage.Id  
+            };
+
+            await hubConnection.InvokeAsync("SendMessage", createMessage);
+
+            msgInput = String.Empty;
+        }
+    }
+    private async Task Delete()
+    {
+        
+    }
+
+    private async Task Send()
+    {
+
         if(!string.IsNullOrEmpty(msgInput))
         {
             CreateMessage createMessage = new()
@@ -100,6 +144,19 @@ else
             await hubConnection.InvokeAsync("SendMessage", createMessage);
 
             msgInput = String.Empty;
+        }
+
+        if(messageMode == "update")
+        {
+            CreateMessage createMessage = new()
+            {
+                ChatId = Convert.ToInt32(chatId),
+                MessageText = msgInput,
+                SenderName = userName
+                
+            };
+
+            await hubConnection.InvokeAsync("UpdateMessage", createMessage);
         }
     }
 

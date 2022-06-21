@@ -7,5 +7,6 @@ namespace Chat_BlazorServer.Shared.Components
         public int ChatId { get; set; }
         public string MessageText { get; set; }
         public string? SenderName { get; set; }
+        public int? ReplyId { get; set; }
     }
 }

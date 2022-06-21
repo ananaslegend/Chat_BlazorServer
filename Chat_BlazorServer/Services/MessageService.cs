@@ -36,12 +36,15 @@ namespace Chat_BlazorServer.Services
         {
             Message msg = new()
             {
-                Author = await dbUnit.Users.FindUser(createMessage.SenderName),
-                Chat = await dbUnit.Chats.Get(createMessage.ChatId),
+                Author = dbUnit.Users.FindUser(createMessage.SenderName).Result,
+                Chat = dbUnit.Chats.Get(createMessage.ChatId).Result,
                 Data = createMessage.MessageText,
                 Date = DateTime.Now,
-                Reply = null
             };
+            if(createMessage.ReplyId != null && createMessage.ReplyId != 0)
+            {
+                msg.Reply = dbUnit.Messages.Get(createMessage.ReplyId.Value).Result;
+            }
             dbUnit.Messages.Add(msg);
             await dbUnit.CompleteAsync();
 
@@ -53,6 +56,12 @@ namespace Chat_BlazorServer.Services
                 Data = msg.Data,
                 Date = msg.Date
             };
+            if(msg.Reply != null)
+            {
+                messageItem.ReplyId = msg.Reply.Id;
+                messageItem.ReplyData = msg.Reply.Data;
+                messageItem.ReplyAuthorName = msg.Reply.Author.UserName;
+            }
 
             return messageItem;
         }
