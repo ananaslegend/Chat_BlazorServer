@@ -36,14 +36,17 @@ else
                     </ul>
                     <div class="card-footer">
                         <span class="small">@item.Date.ToString("HH:mm | MMM dd")</span>
-                        <button class="btn" >
-                            <span class="oi oi-loop-circular small"></span>
+                        @if(item.AuthorName == userName)
+                        {
+                            <button class="btn" @onclick="() => ChangeMessageModeToUpdate(item)">
+                                <span class="oi oi-pencil small"></span>
+                            </button>
+                        }
+                        <button class="btn" @onclick="() => Delete(item)">
+                            <span class="oi oi-trash small"></span>
                         </button>
                         <button class="btn" @onclick="() => ChangeMessageModeToReply(item)">
                             <span class="oi oi-share small"></span>
-                        </button>
-                        <button class="btn">
-                            <span class="oi oi-trash small"></span>
                         </button>
                     </div>
                 </div> 
@@ -56,9 +59,13 @@ else
                 <textarea @bind="msgInput" class="form-control" placeholder="Ur msg..."></textarea>
             </div>
             <div class="col-3">
+                @if(messageMode == "update")
+                {
+                    <button class="btn btn-primary" type="button" @onclick="Update">Update</button>
+                }
                 @if(messageMode == "reply")
                 {
-                    <button class="btn btn-primary" type="button" @onclick="Reply">Send</button>
+                    <button class="btn btn-primary" type="button" @onclick="Reply">Reply</button>
                 }
                 @if(messageMode == "send")
                 {
@@ -76,6 +83,7 @@ else
     public int chatId { get; set; }
     List<MessageItem> messages = new();
     MessageItem? replyingMessage = null;
+    MessageItem? updatingingMessage = null;
     private HubConnection? hubConnection;
     string messageMode = "send";
 
@@ -92,20 +100,24 @@ else
         messageMode = "reply";
         StateHasChanged();
     }
-    private void ChangeMessageModeToUpdate()
+    private void ChangeMessageModeToUpdate(MessageItem message)
     {
         messageMode = "update";
+        updatingingMessage = message;
+        msgInput = message.Data;
         StateHasChanged();
     }
-    private void ChangeMessageModeToDelete()
-    {
-        messageMode = "delete";
-        StateHasChanged();
-    }
-
     private async Task Update()
     {
+        if(updatingingMessage != null && !string.IsNullOrEmpty(msgInput))
+        {
+            updatingingMessage.Data = msgInput;
+            await hubConnection.InvokeAsync("UpdateMessage", updatingingMessage);
 
+            msgInput = String.Empty;
+            messageMode = "send";
+            updatingingMessage = null;
+        }
     }
     private async Task Reply()
     {
@@ -123,10 +135,16 @@ else
 
             msgInput = String.Empty;
         }
+        messageMode = "send";
+        replyingMessage = null;
     }
-    private async Task Delete()
+
+    private async Task Delete(MessageItem message)
     {
-        
+        if(message != null)
+        {
+            await hubConnection.InvokeAsync("RemoveMessage", message);
+        }
     }
 
     private async Task Send()
@@ -144,19 +162,6 @@ else
             await hubConnection.InvokeAsync("SendMessage", createMessage);
 
             msgInput = String.Empty;
-        }
-
-        if(messageMode == "update")
-        {
-            CreateMessage createMessage = new()
-            {
-                ChatId = Convert.ToInt32(chatId),
-                MessageText = msgInput,
-                SenderName = userName
-                
-            };
-
-            await hubConnection.InvokeAsync("UpdateMessage", createMessage);
         }
     }
 
@@ -192,6 +197,21 @@ else
                     loaded += 1;
                     StateHasChanged();
                 }));
+
+                hubConnection.On<int>("ReceiveDeleteMessage", (chatId) =>
+                {
+                    messages.Remove(messages.Single(m => m.Id == chatId));
+                    StateHasChanged();
+                });
+
+                 hubConnection.On<MessageItem>("ReceiveUpdateMessage", (updateMessage) =>
+                {
+                    var indexMessage = messages.FindIndex(m => m.Id == updateMessage.Id);
+                    messages[indexMessage] = updateMessage;
+
+                    StateHasChanged();
+                });
+                
 
                 await hubConnection.StartAsync();
                 await hubConnection.InvokeAsync("JoinRoom", chatId);

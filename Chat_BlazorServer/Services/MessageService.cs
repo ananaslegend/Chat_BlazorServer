@@ -18,20 +18,20 @@ namespace Chat_BlazorServer.Services
                 Id = msg.Id,
                 AuthorName = msg.Author.UserName,
                 ChatName = msg.Chat.Name,
+                ChatId = msg.Chat.Id,
                 Data = msg.Data,
                 Date = msg.Date
             };
 
-            if(msg.Reply is not null)
+            if(msg.Reply != null)
             {
                 messageItem.ReplyId = msg.Reply.Id;
                 messageItem.ReplyData = msg.Reply.Data;
-                messageItem.AuthorName = msg.Author.UserName;
+                messageItem.ReplyAuthorName = msg.Reply.Author.UserName;
             }
 
-            return  messageItem;
+            return messageItem;
         }
-
         public async Task<MessageItem> AddNewMessageAsync(CreateMessage createMessage)
         {
             Message msg = new()
@@ -43,7 +43,7 @@ namespace Chat_BlazorServer.Services
             };
             if(createMessage.ReplyId != null && createMessage.ReplyId != 0)
             {
-                msg.Reply = dbUnit.Messages.Get(createMessage.ReplyId.Value).Result;
+                msg.Reply = dbUnit.Messages.GetMessageById(createMessage.ReplyId.Value).Result;
             }
             dbUnit.Messages.Add(msg);
             await dbUnit.CompleteAsync();
@@ -53,6 +53,7 @@ namespace Chat_BlazorServer.Services
                 Id = msg.Id,
                 AuthorName = msg.Author.UserName,
                 ChatName = msg.Chat.Name,
+                ChatId = msg.Chat.Id,
                 Data = msg.Data,
                 Date = msg.Date
             };
@@ -65,7 +66,6 @@ namespace Chat_BlazorServer.Services
 
             return messageItem;
         }
-
         public async Task<IEnumerable<MessageItem>> GetMessagePack(int chatId, int loaded, int batch)
         {
             var messagePack = await dbUnit.Messages.GetMessagePack(chatId, loaded, batch);
@@ -77,6 +77,20 @@ namespace Chat_BlazorServer.Services
             }
 
             return messageItemList;
+        }
+        public async Task Remove(int messageId)
+        {
+            dbUnit.Messages.Remove(dbUnit.Messages.Find(m => m.Id == messageId).First());
+
+            await dbUnit.CompleteAsync();
+        }
+        public async Task Update(MessageItem message)
+        {
+            dbUnit.Messages.UpdateMessageData(
+                dbUnit.Messages.Find(m => m.Id == message.Id).First(),
+                message.Data);
+
+            await dbUnit.CompleteAsync();
         }
     }
 }

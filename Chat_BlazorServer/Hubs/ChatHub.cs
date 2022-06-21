@@ -18,10 +18,6 @@ namespace Chat_BlazorServer.Hubs
             this.messageService = messageService;
         }
         
-        public async Task SendTestMessage()
-        {
-            await Clients.Caller.SendAsync("ReceiveTestMessage", "hi from Server");
-        }
         public async Task JoinRoom(int chatId)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, Convert.ToString(chatId));
@@ -37,42 +33,19 @@ namespace Chat_BlazorServer.Hubs
             var pack = messageService.GetMessagePack(chatId, loaded, batch).Result;
             await Clients.Caller.SendAsync("AddMessagePack", pack);
         }
+        public async Task RemoveMessage(MessageItem message)
+        {
+            await messageService.Remove(message.Id);
+
+            await Clients.Group(message.ChatId.ToString())
+                .SendAsync("ReceiveDeleteMessage", message.Id);
+        }
+        public async Task UpdateMessage(MessageItem message)
+        {
+            await messageService.Update(message);
+
+            await Clients.Group(message.ChatId.ToString())
+                .SendAsync("ReceiveUpdateMessage", message);
+        }
     }
-
-    //public class ChatHub : Hub
-    //{
-    //    private readonly UnitOfWork dbUnit;
-
-    //    public ChatHub(UnitOfWork dbUnit)
-    //    {
-    //        this.dbUnit = dbUnit;
-
-    //    }
-    //    public async Task JoinRoom(int chatId)
-    //    {
-    //        await Groups.AddToGroupAsync(Context.ConnectionId, Convert.ToString(chatId));
-    //    }
-    //    public async Task LeaveRoom(string chatGuid)
-    //    {
-    //        await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatGuid);
-    //    }
-    //    public async Task GetMassagePack(int chatId, int loaded, int batch)
-    //    {
-    //        var pack = dbUnit.Messages.GetMessagePack(chatId, loaded, batch);
-    //        await Clients.Caller.SendAsync("AddMessagePack", pack);
-    //    }
-    //    public async Task AddMessage(CreateMessage createMessage)
-    //    {
-    //        Message msg = new()
-    //        {
-    //            Author = dbUnit.Users.FindUser(createMessage.SenderName),
-    //            Chat = dbUnit.Chats.Get(createMessage.ChatId),
-    //            Data = createMessage.MessageText,
-    //            Date = DateTime.Now,
-    //            Reply = null
-    //        };
-    //        dbUnit.Messages.Add(msg);
-    //        await Clients.Group(Convert.ToString(createMessage.ChatId)).SendAsync("AddMessage", msg);
-    //    }
-    //}
 }

@@ -32,6 +32,20 @@ namespace Chat_BlazorServer.DataAccess.Repositories
             return list;
         }
 
+        public Task<Message> GetMessageById(int Id)
+        {
+            return ApplicationContext.Messages
+                .Include(a => a.Author)
+                .Include(r => r.Reply)
+                .Include(c => c.Chat)
+                .FirstAsync(a => a.Id == Id);
+        }
+
+        public void UpdateMessageData(Message message, string data)
+        {
+            message.Data = data;
+        }
+
         //downcast from generic 
         public ApplicationContext ApplicationContext
         {

@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public string AuthorName { get; set; }
+        public int ChatId { get; set; }
         public string ChatName { get; set; }
         public DateTime Date { get; set; }
         public string Data { get; set; }
