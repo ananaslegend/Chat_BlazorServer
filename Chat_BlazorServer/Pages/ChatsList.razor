@@ -40,7 +40,7 @@
 
     private void EnterChat(int chatId)
     {
-        NavManager.NavigateTo("/");
+        NavManager.NavigateTo($"/chat/{chatId}");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -49,11 +49,12 @@
         {
             var user = await localStorage.GetItemAsStringAsync("UserName");
             userName.Title = user.Trim('"');
-            
+
             var responseWithChats = await chatClient.GetResponseAllUserChatsAsync(userName);
 
-            UserAccessCheck(responseWithChats, () =>
+            UserAccessCheck(responseWithChats, async () =>
             {
+                
                 chats = responseWithChats.Content.ReadFromJsonAsync<List<ChatDisplayModel>>().Result;
                 status = AuthStatus.Authed;
                 StateHasChanged();

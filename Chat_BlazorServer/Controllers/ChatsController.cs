@@ -36,6 +36,7 @@ namespace Chat_BlazorServer.Controllers
                 userChats.Add(
                     new ChatDisplayModel()
                     {
+                        Id = item.Id,
                         Name = item.Name,
                         Type = item.Type
                     });
