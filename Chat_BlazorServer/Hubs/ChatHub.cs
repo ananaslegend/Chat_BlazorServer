@@ -9,12 +9,10 @@ namespace Chat_BlazorServer.Hubs
 {
     public class ChatHub : Hub
     {
-        private readonly IUnitOfWork dbUnit;
         private readonly MessageService messageService;
 
-        public ChatHub(IUnitOfWork dbUnit, MessageService messageService)
+        public ChatHub(MessageService messageService)
         {
-            this.dbUnit = dbUnit;
             this.messageService = messageService;
         }
         

@@ -19,7 +19,9 @@ else
         {
             <p>No messages yet</p>
         }
-
+        <button class="btn btn-outline-primary mb-3" @onclick="GetOlderMessages">
+            <span class="oi oi-clock"></span>
+        </button>
         @foreach (var item in messages)
         {
             <div class="mb-3 d-flex">
@@ -39,14 +41,14 @@ else
                         @if(item.AuthorName == userName)
                         {
                             <button class="btn" @onclick="() => ChangeMessageModeToUpdate(item)">
-                                <span class="oi oi-pencil small"></span>
+                                <span class="oi oi-pencil small "></span>
                             </button>
                         }
                         <button class="btn" @onclick="() => Delete(item)">
                             <span class="oi oi-trash small"></span>
                         </button>
-                        <button class="btn" @onclick="() => ChangeMessageModeToReply(item)">
-                            <span class="oi oi-share small"></span>
+                        <button class="btn " @onclick="() => ChangeMessageModeToReply(item)">
+                            <span class="oi oi-share small "></span>
                         </button>
                     </div>
                 </div> 
@@ -138,7 +140,6 @@ else
         messageMode = "send";
         replyingMessage = null;
     }
-
     private async Task Delete(MessageItem message)
     {
         if(message != null)
@@ -146,7 +147,6 @@ else
             await hubConnection.InvokeAsync("RemoveMessage", message);
         }
     }
-
     private async Task Send()
     {
 
@@ -163,6 +163,11 @@ else
 
             msgInput = String.Empty;
         }
+    }
+    private async Task GetOlderMessages()
+    {
+        await hubConnection.InvokeAsync("GetMassagePack", chatId, messages.Count, batch);
+        StateHasChanged();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -204,7 +209,7 @@ else
                     StateHasChanged();
                 });
 
-                 hubConnection.On<MessageItem>("ReceiveUpdateMessage", (updateMessage) =>
+                hubConnection.On<MessageItem>("ReceiveUpdateMessage", (updateMessage) =>
                 {
                     var indexMessage = messages.FindIndex(m => m.Id == updateMessage.Id);
                     messages[indexMessage] = updateMessage;
