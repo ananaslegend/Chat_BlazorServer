@@ -106,13 +106,20 @@ namespace Chat_BlazorServer.Controllers
             return Ok();
         }
 
-        [HttpPost("join_to_chat/{chatId}/{userName}")]
-        public async Task<IActionResult> JoinToChat([FromRoute] string chatId, [FromRoute] string userName)
+        [HttpPost("join_to_chat/")]
+        public async Task<IActionResult> JoinToChat([FromBody] JoinChatModel model)
         {
-            var user = userManager.FindByNameAsync(userName).Result;
+            var user = userManager.FindByNameAsync(model.UserName).Result;
 
-            dbUnit.Chats.AddUserToChat(chatId, user);
-            await dbUnit.CompleteAsync();
+            try
+            {
+                dbUnit.Chats.AddUserToChat(model.ChatId, user);
+                await dbUnit.CompleteAsync();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
 
             return Ok();
         }

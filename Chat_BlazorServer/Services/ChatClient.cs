@@ -64,19 +64,6 @@ namespace Chat_BlazorServer.Services
             return await response.Content.ReadFromJsonAsync<IEnumerable<ChatDisplayModel>>();
         }
 
-        //public async Task CreatePrivateChat(CreatePrivateChatModel model)
-        //{
-        //    var token = await tokenHelper.GetTokenAsync();
-
-        //    client.DefaultRequestHeaders.Authorization =
-        //        new AuthenticationHeaderValue("Bearer", token);
-
-        //    var json = JsonConvert.SerializeObject(model);
-        //    var payload = new StringContent(json, Encoding.UTF8, "application/json");
-
-        //    var response = await client.PostAsync("chats/create_private_chat", payload);
-        //}
-
         public async Task CreateChat(CreateChatModel model, ChatType type)
         {
             var token = await tokenHelper.GetTokenAsync();
@@ -98,14 +85,23 @@ namespace Chat_BlazorServer.Services
             }  
         }
 
-        public async Task JoinToChat(int chatId, string userName)
+        public async Task<bool> JoinToChat(int chatId, string userName)
         {
             var token = await tokenHelper.GetTokenAsync();
 
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await client.PostAsync($"chats/join_to_chat/{chatId}/{userName}", null);
+            var json = JsonConvert.SerializeObject(new JoinChatModel()
+            {   
+                ChatId = chatId,
+                UserName = userName
+            });
+            var payload = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync("chats/join_to_chat/", payload);
+
+            return response.IsSuccessStatusCode ? true : false;
         }
     }
 }

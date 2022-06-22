@@ -1,6 +1,7 @@
 ﻿@page "/search"
 @inherits BaseAuth
 
+@inject NavigationManager NavManager
 @inject ChatClient chatClient
 @inject ILocalStorageService localStorage
 
@@ -51,7 +52,12 @@
 
     private async void JoinChat(int chatId)
     {
-        await chatClient.JoinToChat(chatId, userName);
+        var IsSucessJoin = await chatClient.JoinToChat(chatId, userName);
+
+        if(IsSucessJoin)
+        {
+            NavManager.NavigateTo($"/chat/{chatId}");
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -2,6 +2,7 @@
 using Chat_BlazorServer.DataAccess.Abstractions;
 using Chat_BlazorServer.Domain.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,20 +33,20 @@ namespace Chat_BlazorServer.DataAccess.Repositories
             return ApplicationContext.Chats.Where(u => u.ChatUsers.Contains(user));
         }
 
-        public void AddUserToChat(string chatId, ApplicationUser user)
+        public void AddUserToChat(int chatId, ApplicationUser user)
         {
-            var chat = ApplicationContext.Chats.FirstOrDefault(c => c.Id == Convert.ToInt64(chatId));
+            var chat = ApplicationContext.Chats
+                .Include(u => u.ChatUsers)
+                .FirstOrDefault(c => c.Id == chatId);
             if (chat is null)
             {
                 throw new Exception("User not found");
             }
 
-            if(chat.ChatUsers.Contains(user))
+            if(!chat.ChatUsers.Contains(user))
             {
-                return;
-            }         
-            
-            chat.ChatUsers.Add(user);
+                chat.ChatUsers.Add(user);
+            }
         }
     }
 }

@@ -4,6 +4,7 @@
 @inject NavigationManager NavManager
 @inject ILocalStorageService localStorage
 @inject ChatClient chatClient
+@inject ITokenHelper tokenHelper
 
 @if (status == AuthStatus.NotSet)
 {
@@ -47,14 +48,21 @@
     {
         if (firstRender)
         {
-            var user = await localStorage.GetItemAsStringAsync("UserName");
-            userName.Title = user.Trim('"');
+            try
+            {
+                var user = await localStorage.GetItemAsStringAsync("UserName");
+                userName.Title = user.Trim('"');
+            }
+            catch(Exception)
+            {
+                await tokenHelper.RemoveTokenAsync();
+                NavManager.NavigateTo("login");
+            }
 
             var responseWithChats = await chatClient.GetResponseAllUserChatsAsync(userName);
 
-            UserAccessCheck(responseWithChats, async () =>
+            UserAccessCheck(responseWithChats, () =>
             {
-                
                 chats = responseWithChats.Content.ReadFromJsonAsync<List<ChatDisplayModel>>().Result;
                 status = AuthStatus.Authed;
                 StateHasChanged();

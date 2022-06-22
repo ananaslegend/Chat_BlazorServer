@@ -10,7 +10,7 @@ namespace Chat_BlazorServer.DataAccess.Abstractions
     public interface IChatRepository : IGenericRepository<Chat>
     {
         public IEnumerable<Chat> GetChatsByName(string chatName);
-        public void AddUserToChat(string chatId, ApplicationUser user);
+        public void AddUserToChat(int chatId, ApplicationUser user);
         public IEnumerable<Chat> GetAllUserChats(ApplicationUser user);
     }
 }
