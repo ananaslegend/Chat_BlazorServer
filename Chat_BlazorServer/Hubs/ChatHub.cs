@@ -33,10 +33,16 @@ namespace Chat_BlazorServer.Hubs
         }
         public async Task RemoveMessage(MessageItem message)
         {
-            await messageService.Remove(message.Id);
-
-            await Clients.Group(message.ChatId.ToString())
-                .SendAsync("ReceiveDeleteMessage", message.Id);
+            try
+            {
+                await messageService.Remove(message.Id);
+                await Clients.Group(message.ChatId.ToString())
+                                .SendAsync("ReceiveDeleteMessage", message.Id);
+            }
+            catch
+            {
+                // Nothin happens
+            }
         }
         public async Task UpdateMessage(MessageItem message)
         {

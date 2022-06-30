@@ -16,8 +16,8 @@ namespace Chat_BlazorServer.Tests.PL.Services
     public class MessageServiceShould
     {
         private readonly Mock<IUnitOfWork> mockUnitOfWork = new();
-        Fixture fixture = new Fixture();
-        MessageService sut;
+        private Fixture fixture = new Fixture();
+        private MessageService sut;
         public MessageServiceShould()
         {
             sut = new(mockUnitOfWork.Object);
