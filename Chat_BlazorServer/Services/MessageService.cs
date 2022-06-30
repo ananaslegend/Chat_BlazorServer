@@ -66,9 +66,9 @@ namespace Chat_BlazorServer.Services
 
             return messageItem;
         }
-        public async Task<IEnumerable<MessageItem>> GetMessagePack(int chatId, int loaded, int batch)
+        public async Task<ICollection<MessageItem>> GetMessagePack(int chatId, int loaded, int batch)
         {
-            var messagePack = await dbUnit.Messages.GetMessagePack(chatId, loaded, batch);
+            var messagePack = dbUnit.Messages.GetMessagePack(chatId, loaded, batch).Result;
             List<MessageItem> messageItemList = new();
 
             foreach (var item in messagePack)

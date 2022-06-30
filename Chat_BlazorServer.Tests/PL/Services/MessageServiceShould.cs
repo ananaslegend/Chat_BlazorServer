@@ -199,9 +199,25 @@ namespace Chat_BlazorServer.Tests.PL.Services
         }
         [Theory]
         [InlineData(0, 0, 20)]
-        public async void GetMessagePack_WuthSuccessData(int chatId, int loaded, int batch)
+        public async void GetMessagePack_WithSuccessData(int chatId, int loaded, int batch)
         {
+            // Arrange 
+            mockUnitOfWork.Setup(o => o.Messages.GetMessagePack(chatId, loaded, batch).Result)
+                .Returns(() =>
+                {
+                    var pack = fixture.CreateMany<Message>(batch).ToList();
+                    return pack;
+                });
 
+            // Act 
+            var result = await sut.GetMessagePack(chatId, loaded, batch);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Count.Should().BeLessThanOrEqualTo(batch);
+            result.Should().BeAssignableTo<ICollection<MessageItem>>();
+
+            mockUnitOfWork.Verify(unit => unit.Messages.GetMessagePack(chatId, loaded, batch));
         }
     }
 }
