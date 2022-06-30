@@ -36,14 +36,14 @@ namespace Chat_BlazorServer.Services
         {
             Message msg = new()
             {
-                Author = dbUnit.Users.FindUser(createMessage.SenderName).Result,
-                Chat = dbUnit.Chats.Get(createMessage.ChatId).Result,
+                Author = dbUnit.Users.FindUser(createMessage.SenderName).Result ?? throw new Exception("User not found"),
+                Chat = dbUnit.Chats.Get(createMessage.ChatId).Result ?? throw new Exception("Chat not found"),
                 Data = createMessage.MessageText,
                 Date = DateTime.Now,
             };
             if(createMessage.ReplyId != null && createMessage.ReplyId != 0)
             {
-                msg.Reply = dbUnit.Messages.GetMessageById(createMessage.ReplyId.Value).Result;
+                msg.Reply = dbUnit.Messages.GetMessageById(createMessage.ReplyId.Value).Result ?? throw new Exception("Message not found");
             }
             dbUnit.Messages.Add(msg);
             await dbUnit.CompleteAsync();
@@ -80,14 +80,16 @@ namespace Chat_BlazorServer.Services
         }
         public async Task Remove(int messageId)
         {
-            dbUnit.Messages.Remove(dbUnit.Messages.Find(m => m.Id == messageId).First());
+            var messageToRemove = dbUnit.Messages.GetMessageById(messageId).Result;
+
+            dbUnit.Messages.Remove(messageToRemove);
 
             await dbUnit.CompleteAsync();
         }
         public async Task Update(MessageItem message)
         {
             dbUnit.Messages.UpdateMessageData(
-                dbUnit.Messages.Find(m => m.Id == message.Id).First(),
+                dbUnit.Messages.GetMessageById(message.Id).Result,
                 message.Data);
 
             await dbUnit.CompleteAsync();
