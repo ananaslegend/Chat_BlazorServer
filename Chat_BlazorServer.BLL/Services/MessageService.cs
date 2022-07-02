@@ -1,8 +1,8 @@
 ﻿using Chat_BlazorServer.DataAccess.Abstractions;
+using Chat_BlazorServer.Domain.DTOs;
 using Chat_BlazorServer.Domain.Models;
-using Chat_BlazorServer.Shared.Components;
 
-namespace Chat_BlazorServer.Services
+namespace Chat_BlazorServer.BLL.Services
 {
     public class MessageService
     {

@@ -1,4 +1,4 @@
-﻿namespace Chat_BlazorServer.Shared.Components
+﻿namespace Chat_BlazorServer.Domain.DTOs
 {
     public class MessageItem
     {

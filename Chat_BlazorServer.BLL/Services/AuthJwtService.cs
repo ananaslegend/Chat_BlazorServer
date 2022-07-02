@@ -25,7 +25,6 @@ namespace Chat_BlazorServer.BLL.Services
             _config = config;
             _userManager = userManager;
         }
-
         public async Task<ApplicationUser> Auth(UserLoginDTO userData)
         {
             var user = _userManager.Users.FirstOrDefault(x => x.UserName == userData.UserName);
@@ -38,7 +37,6 @@ namespace Chat_BlazorServer.BLL.Services
 
             throw new Exception("User not found");
         }
-
         public async Task<bool> Registration(UserLoginDTO userData)
         {
             var existUser = _userManager.Users.FirstOrDefault(x => x.UserName == userData.UserName);
@@ -51,7 +49,6 @@ namespace Chat_BlazorServer.BLL.Services
 
             return result.Succeeded;
         }
-
         public string GenerateJwtToken(ApplicationUser user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Key"]));
@@ -71,7 +68,5 @@ namespace Chat_BlazorServer.BLL.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
-      
     }
 }

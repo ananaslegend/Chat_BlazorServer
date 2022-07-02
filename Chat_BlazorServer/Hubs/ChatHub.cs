@@ -2,8 +2,10 @@
 using Chat_BlazorServer.DataAccess.Abstractions;
 using Chat_BlazorServer.Domain.Models;
 using Chat_BlazorServer.Services;
+using Chat_BlazorServer.BLL.Services;
 using Chat_BlazorServer.Shared.Components;
 using Microsoft.AspNetCore.SignalR;
+using Chat_BlazorServer.Domain.DTOs;
 
 namespace Chat_BlazorServer.Hubs
 {
