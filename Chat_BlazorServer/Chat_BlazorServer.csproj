@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.0.0" />
+    <PackageReference Include="Azure.Identity" Version="1.4.0" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.6" />
@@ -24,6 +26,8 @@
     <ProjectReference Include="..\Chat_BlazorServer.BLL\Chat_BlazorServer.BLL.csproj" />
     <ProjectReference Include="..\Chat_BlazorServer.DataAccess\Chat_BlazorServer.DataAccess.csproj" />
     <ProjectReference Include="..\Chat_BlazorServer.Data\Chat_BlazorServer.Data.csproj" />
+    <ProjectReference Include="..\Chat_BlazorServer.Domain\Chat_BlazorServer.Domain.csproj" />
+    <ProjectReference Include="..\Chat_BlazorServer.SqlServerDb\Chat_BlazorServer.SqlServerDb.sqlproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -51,7 +51,7 @@ namespace Chat_BlazorServer.BLL.Services
         }
         public string GenerateJwtToken(ApplicationUser user)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Key"]));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT-Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
@@ -60,8 +60,8 @@ namespace Chat_BlazorServer.BLL.Services
             };
 
             var token = new JwtSecurityToken(
-                issuer: _config["JWT:Issuer"],
-                audience: _config["JWT:Audience"],
+                issuer: _config["JWT-Issuer"],
+                audience: _config["JWT-Audience"],
                 claims,
                 expires: DateTime.Now.AddMinutes(60),
                 signingCredentials: credentials);

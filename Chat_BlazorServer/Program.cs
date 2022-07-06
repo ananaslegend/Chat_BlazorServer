@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Chat_BlazorServer.Configuration;
 using Chat_BlazorServer.Hubs;
+using Azure.Identity;
 
 var builder = AppConfiguration
                 .AddServicesAsync(WebApplication

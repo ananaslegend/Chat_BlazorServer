@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Chat_BlazorServer.Hubs;
 using Newtonsoft.Json;
 using System.Text.Json.Serialization;
+using Azure.Identity;
 
 namespace Chat_BlazorServer.Configuration
 {
@@ -25,6 +26,9 @@ namespace Chat_BlazorServer.Configuration
     {
         public static WebApplicationBuilder AddServicesAsync(WebApplicationBuilder builder)
         {
+            var keyVaultEndpoint = new Uri(builder.Configuration["AzureKeyVault"]);
+            builder.Configuration.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
+
             // Add services to the container.
             builder.Services.AddRazorPages();
 
@@ -39,7 +43,7 @@ namespace Chat_BlazorServer.Configuration
 
             builder.Services.AddDbContext<ApplicationContext>(opt =>
             {
-                opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+            opt.UseSqlServer(builder.Configuration["DefaultDbConnection"],
                 b => b.MigrationsAssembly("Chat_BlazorServer"));
             });
 
@@ -76,10 +80,10 @@ namespace Chat_BlazorServer.Configuration
                                     ValidateIssuer = true,
                                     ValidateAudience = true,
                                     ValidateLifetime = true,
-                                    ValidIssuer = builder.Configuration["JWT:Issuer"],
-                                    ValidAudience = builder.Configuration["JWT:Audience"],
+                                    ValidIssuer = builder.Configuration["JWT-Issuer"],
+                                    ValidAudience = builder.Configuration["JWT-Audience"],
                                     IssuerSigningKey = new SymmetricSecurityKey(
-                                    Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+                                    Encoding.UTF8.GetBytes(builder.Configuration["JWT-Key"]))
                                 };
                             });
 

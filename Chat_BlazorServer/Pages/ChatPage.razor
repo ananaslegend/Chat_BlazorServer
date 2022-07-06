@@ -185,7 +185,7 @@ else
                 status = AuthStatus.Authed;
 
                 hubConnection = new HubConnectionBuilder()
-                                    .WithUrl("https://localhost:44300/chathub")
+                                    .WithUrl("https://chatappblazorserver.azurewebsites.net/chathub")
                                     .Build();
 
                 hubConnection.On<IList<MessageItem>>("AddMessagePack", (pack =>
