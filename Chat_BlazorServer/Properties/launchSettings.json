@@ -16,7 +16,8 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "VaultUri": "https://chatappblazorserverkeys.vault.azure.net/",
-        "AZURE_USERNAME": "ananas.dan15st@gmail.com"
+        "AZURE_USERNAME": "ananas.dan15st@gmail.com",
+        "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.Azure.SignalR"
       }
     },
     "IIS Express": {
@@ -25,7 +26,8 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "VaultUri": "https://chatappblazorserverkeys.vault.azure.net/",
-        "AZURE_USERNAME": "ananas.dan15st@gmail.com"
+        "AZURE_USERNAME": "ananas.dan15st@gmail.com",
+        "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.Azure.SignalR"
       }
     }
   }
